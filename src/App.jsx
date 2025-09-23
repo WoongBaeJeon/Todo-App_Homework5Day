@@ -10,9 +10,16 @@ function App() {
 
   return (
     <>
-      <TodoList todoList={todoList} setTodoList={setTodoList} />
-      <hr />
-      <TodoInput todoList={todoList} setTodoList={setTodoList} />
+      <header className="header">
+        <div className="header-name">
+          <h1>할일 리스트</h1>
+        </div>
+      </header>
+      <body className="body">
+        <TodoList todoList={todoList} setTodoList={setTodoList} />
+        <hr />
+        <TodoInput todoList={todoList} setTodoList={setTodoList} />
+      </body>
     </>
   );
 }
@@ -52,24 +59,32 @@ function TodoList({ todoList, setTodoList }) {
 
 function Todo({ todo, setTodoList }) {
   const [inputValue, setInputValue] = useState("");
+  const [active, setActive] = useState(false); //활성화 상태 변수 선언
+
+  function updateBtn() {
+    setActive(!active);
+    setTodoList((prev) =>
+      prev.map((el) =>
+        el.id === todo.id ? { ...el, content: inputValue } : el
+      )
+    );
+    // console.log(inputValue);
+    if (inputValue !== "" && inputValue !== "null") {
+      setInputValue("");
+    }
+  }
+
   return (
     <li>
-      {todo.content}
-      <input
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-      />
-      <button
-        onClick={() => {
-          setTodoList((prev) =>
-            prev.map((el) =>
-              el.id === todo.id ? { ...el, content: inputValue } : el
-            )
-          );
-        }}
-      >
-        수정
-      </button>
+      할일 : {todo.content}
+      {active && (
+        <input
+          //disabled={!active} //active 전에 먼저 추가한 disabled 속성
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+        />
+      )}
+      <button onClick={updateBtn}>수정</button>
       <button
         onClick={() => {
           setTodoList((prev) => {
@@ -79,6 +94,10 @@ function Todo({ todo, setTodoList }) {
       >
         삭제
       </button>
+      <span>
+        완료
+        <input type="checkbox"></input>
+      </span>
     </li>
   );
 }
